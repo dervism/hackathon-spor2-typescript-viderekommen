@@ -1,0 +1,34 @@
+name: Leaderboard
+
+on:
+  push:
+    branches: ['**']
+
+permissions:
+  id-token: write
+  contents: read
+
+concurrency:
+  group: leaderboard-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  grade:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v5
+
+      - uses: actions/setup-node@v5
+        with:
+          node-version: '25'
+
+      - name: Install dependencies
+        run: npm ci || npm install
+
+      - name: Run tests (red is OK)
+        run: npm test
+        continue-on-error: true
+
+      - name: Submit results to leaderboard
+        if: always()
+        run: node .github/scripts/submit.mjs --track 2

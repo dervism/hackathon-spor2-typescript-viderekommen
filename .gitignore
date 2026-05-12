@@ -1,0 +1,7 @@
+node_modules
+dist
+junit-report.xml
+.DS_Store
+*.log
+.vscode
+.idea
